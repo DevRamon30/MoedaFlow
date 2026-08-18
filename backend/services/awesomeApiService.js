@@ -1,0 +1,54 @@
+const axios = require('axios');
+
+// Cache configuration
+let cache = null;
+let lastFetchTime = 0;
+const CACHE_TTL = 60 * 1000; // 60 seconds
+
+const API_URL = 'https://economia.awesomeapi.com.br/json/last/USD-BRL,EUR-BRL,BTC-BRL';
+
+const apiClient = axios.create({
+  timeout: 5000, // 5s timeout
+});
+
+async function getCotacoes() {
+  const now = Date.now();
+  if (cache && (now - lastFetchTime < CACHE_TTL)) {
+    return cache;
+  }
+
+  try {
+    const response = await apiClient.get(API_URL);
+    const data = response.data;
+    
+    // Normalize data
+    const normalizedData = [
+      normalizeMoeda(data.USDBRL),
+      normalizeMoeda(data.EURBRL),
+      normalizeMoeda(data.BTCBRL)
+    ].filter(Boolean);
+
+    cache = normalizedData;
+    lastFetchTime = Date.now();
+
+    return cache;
+  } catch (error) {
+    console.error('Erro ao buscar cotações da AwesomeAPI:', error.message);
+    throw new Error('Serviço de cotações indisponível no momento.');
+  }
+}
+
+function normalizeMoeda(item) {
+  if (!item) return null;
+  return {
+    moeda: item.name,
+    valorCompra: parseFloat(item.bid),
+    valorVenda: parseFloat(item.ask),
+    variacaoPercentual: parseFloat(item.pctChange),
+    dataHora: item.create_date
+  };
+}
+
+module.exports = {
+  getCotacoes
+};
