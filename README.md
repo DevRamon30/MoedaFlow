@@ -8,8 +8,10 @@ MoedaFlow é uma plataforma moderna e responsiva de monitoramento financeiro em 
 - **Cotações em Tempo Real:** Acompanhamento de moedas como Bitcoin, Ethereum, Solana, Dólar e Euro, consumindo dados do CoinGecko e AwesomeAPI.
 - **Gráficos Históricos:** Visualização clara das oscilações de mercado e histórico de variação.
 - **Painel de Alertas Automáticos:** Detecção contínua de variações de preço, salvando e listando registros críticos diretamente no Airtable.
+- **Notificações via Webhook:** Envio automático de mensagens para Slack ou Discord em caso de oscilações críticas do mercado.
 - **Destaques do Mercado:** Um carrossel automatizado (slider) de notícias do mundo cripto e financeiro (via CoinTelegraph), 100% imune a bloqueios de CORS e sem necessidade de API Keys.
 - **Sincronização Background (Cron Job):** Um worker automatizado no backend roda periodicamente para atualizar as cotações e popular o histórico e os alertas no banco de dados de forma autônoma.
+- **Segurança Robusta:** Implementação de políticas de proteção contra abusos, incluindo *Rate Limiting*, CORS estrito e validação de inputs (leia o arquivo `SECURITY.md` para mais detalhes).
 
 ## 🛠 Tecnologias Utilizadas
 
@@ -40,6 +42,7 @@ PORT=3000
 FRONTEND_URL=http://localhost:5173
 AIRTABLE_TOKEN=seu_token_de_acesso_pessoal_do_airtable
 AIRTABLE_BASE_ID=seu_id_da_base_do_airtable
+WEBHOOK_URL=sua_url_de_webhook_discord_ou_slack
 ```
 
 ### 2. Rodando o Backend (API e Cron Jobs)
