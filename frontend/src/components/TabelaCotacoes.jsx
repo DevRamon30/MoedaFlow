@@ -12,16 +12,19 @@ const TabelaCotacoes = () => {
     try {
       const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
       const [resCambio, resCripto] = await Promise.all([
-        fetch(`${API_URL}/api/cambio`),
-        fetch(`${API_URL}/api/cripto`)
+        fetch(`${API_URL}/api/cambio`).catch(() => ({ ok: false })),
+        fetch(`${API_URL}/api/cripto`).catch(() => ({ ok: false }))
       ]);
 
-      if (!resCambio.ok || !resCripto.ok) {
-        throw new Error('Falha ao buscar cotações do servidor');
-      }
+      let dataCambio = [];
+      let dataCripto = [];
 
-      const dataCambio = await resCambio.json();
-      const dataCripto = await resCripto.json();
+      if (resCambio.ok) dataCambio = await resCambio.json();
+      if (resCripto.ok) dataCripto = await resCripto.json();
+
+      if (!resCambio.ok && !resCripto.ok) {
+        throw new Error('Falha ao buscar cotações do servidor (Limite de acessos ou serviço fora do ar)');
+      }
 
       const todasCotacoes = [...dataCambio, ...dataCripto].sort((a, b) => a.moeda.localeCompare(b.moeda));
       setCotacoes(todasCotacoes);
