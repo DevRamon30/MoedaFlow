@@ -10,9 +10,10 @@ const TabelaCotacoes = () => {
     if (!isPolling) setLoading(true);
     setError(null);
     try {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
       const [resCambio, resCripto] = await Promise.all([
-        fetch('http://localhost:3000/api/cambio'),
-        fetch('http://localhost:3000/api/cripto')
+        fetch(`${API_URL}/api/cambio`),
+        fetch(`${API_URL}/api/cripto`)
       ]);
 
       if (!resCambio.ok || !resCripto.ok) {

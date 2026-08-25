@@ -25,7 +25,8 @@ const GraficoHistorico = ({ moedaSelecionada }) => {
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch(`http://localhost:3000/api/historico?moeda=${encodeURIComponent(moedaSelecionada)}`);
+        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+        const response = await fetch(`${API_URL}/api/historico?moeda=${encodeURIComponent(moedaSelecionada)}`);
         if (!response.ok) {
           throw new Error('Falha ao buscar histórico');
         }

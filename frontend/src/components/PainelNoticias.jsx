@@ -11,7 +11,8 @@ const PainelNoticias = () => {
       try {
         setLoading(true);
         // Consome a API do nosso próprio backend para evitar bloqueios de CORS do navegador
-        const response = await fetch('http://localhost:3000/api/noticias');
+        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+        const response = await fetch(`${API_URL}/api/noticias`);
         if (!response.ok) throw new Error('Falha ao buscar notícias');
         
         const data = await response.json();
