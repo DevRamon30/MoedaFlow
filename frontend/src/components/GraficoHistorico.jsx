@@ -21,8 +21,8 @@ const GraficoHistorico = ({ moedaSelecionada }) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchHistorico = async () => {
-      setLoading(true);
+    const fetchHistorico = async (isPolling = false) => {
+      if (!isPolling) setLoading(true);
       setError(null);
       try {
         const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
@@ -51,6 +51,12 @@ const GraficoHistorico = ({ moedaSelecionada }) => {
 
     if (moedaSelecionada) {
       fetchHistorico();
+      
+      const interval = setInterval(() => {
+        fetchHistorico(true);
+      }, 60000); // 60 segundos
+      
+      return () => clearInterval(interval);
     }
   }, [moedaSelecionada]);
 

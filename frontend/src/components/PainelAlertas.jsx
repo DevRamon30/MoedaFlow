@@ -24,7 +24,8 @@ const PainelAlertas = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchAlertas = async () => {
+    const fetchAlertas = async (isPolling = false) => {
+      if (!isPolling) setLoading(true);
       try {
         const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
         const response = await fetch(`${API_URL}/api/alertas`);
@@ -41,6 +42,12 @@ const PainelAlertas = () => {
     };
 
     fetchAlertas();
+    
+    const interval = setInterval(() => {
+      fetchAlertas(true);
+    }, 60000); // 60 segundos
+    
+    return () => clearInterval(interval);
   }, []);
 
   return (
