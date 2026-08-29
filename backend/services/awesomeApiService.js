@@ -7,13 +7,6 @@ const CACHE_TTL = 60 * 1000; // 60 seconds
 
 const API_URL = 'https://economia.awesomeapi.com.br/json/last/USD-BRL,EUR-BRL,BTC-BRL';
 
-const apiClient = axios.create({
-  timeout: 15000, // Aumentado para 15s para evitar timeouts no Render
-  headers: {
-    'User-Agent': 'MoedaFlow/1.0 (Integration; +https://moedaflow.com)'
-  }
-});
-
 async function getCotacoes() {
   const now = Date.now();
   if (cache && (now - lastFetchTime < CACHE_TTL)) {
@@ -21,8 +14,19 @@ async function getCotacoes() {
   }
 
   try {
-    const response = await apiClient.get(API_URL);
-    const data = response.data;
+    const response = await fetch(API_URL, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'User-Agent': 'MoedaFlow/1.0 (Integration)'
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
     
     // Normalize data
     const normalizedData = [
