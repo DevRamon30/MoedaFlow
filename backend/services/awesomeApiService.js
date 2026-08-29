@@ -44,12 +44,25 @@ async function getCotacoes() {
 
 function normalizeMoeda(item) {
   if (!item) return null;
+  
+  // A AwesomeAPI retorna 'YYYY-MM-DD HH:mm:ss' (ex: '2026-08-28 18:30:00')
+  // O Airtable exige formato ISO 8601. Precisamos converter de forma segura.
+  let isoDate = new Date().toISOString(); // Default seguro
+  if (item.create_date) {
+    // Tratando como horário de Brasília (-03:00) para ter um parse correto
+    const dateStr = item.create_date.replace(' ', 'T') + '-03:00';
+    const parsed = new Date(dateStr);
+    if (!isNaN(parsed.getTime())) {
+      isoDate = parsed.toISOString();
+    }
+  }
+
   return {
     moeda: item.name,
     valorCompra: parseFloat(item.bid),
     valorVenda: parseFloat(item.ask),
     variacaoPercentual: parseFloat(item.pctChange),
-    dataHora: item.create_date
+    dataHora: isoDate
   };
 }
 
