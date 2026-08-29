@@ -70,13 +70,21 @@ function startSyncJob() {
       let registrosSalvos = 0;
       
       for (const cotacao of cotacoesCambio) {
-        await processarEsalvarCotacao(cotacao, 'cambio');
-        registrosSalvos++;
+        try {
+          await processarEsalvarCotacao(cotacao, 'cambio');
+          registrosSalvos++;
+        } catch (err) {
+          console.error(`[CRON] Erro ao processar ${cotacao.moeda}:`, err.message);
+        }
       }
 
       for (const cotacao of cotacoesCripto) {
-        await processarEsalvarCotacao(cotacao, 'cripto');
-        registrosSalvos++;
+        try {
+          await processarEsalvarCotacao(cotacao, 'cripto');
+          registrosSalvos++;
+        } catch (err) {
+          console.error(`[CRON] Erro ao processar ${cotacao.moeda}:`, err.message);
+        }
       }
 
       console.log(`[CRON] Sincronização concluída com sucesso! ${registrosSalvos} novos registros inseridos no Airtable.`);
