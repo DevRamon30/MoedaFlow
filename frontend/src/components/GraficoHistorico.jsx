@@ -76,7 +76,17 @@ const GraficoHistorico = ({ moedaSelecionada }) => {
 
       <div className="h-[340px] w-full">
         {loading && (
-          <div className="w-full h-full skeleton rounded-xl"></div>
+          <div className="w-full h-full skeleton rounded-xl flex flex-col items-center justify-center">
+            <div className="animate-pulse flex space-x-2 items-center mb-4">
+               <div className="w-2 h-2 bg-cyan-400 rounded-full"></div>
+               <div className="w-2 h-2 bg-cyan-400 rounded-full opacity-75"></div>
+               <div className="w-2 h-2 bg-cyan-400 rounded-full opacity-50"></div>
+            </div>
+            <p className="text-sm text-cyan-400 animate-pulse text-center px-4">
+              Carregando histórico...<br/>
+              <span className="text-xs text-slate-500/70">(Aguardando resposta do servidor)</span>
+            </p>
+          </div>
         )}
         
         {error && !loading && (

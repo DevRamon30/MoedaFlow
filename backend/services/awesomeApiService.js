@@ -33,6 +33,10 @@ async function getCotacoes() {
 
     return cache;
   } catch (error) {
+    if (cache) {
+      console.warn('Usando cache devido a erro na AwesomeAPI:', error.message);
+      return cache;
+    }
     console.error('Erro ao buscar cotações da AwesomeAPI:', error.message);
     throw new Error('Serviço de cotações indisponível no momento.');
   }

@@ -57,10 +57,21 @@ const TabelaCotacoes = () => {
       </div>
       
       {loading && (
-        <div className="space-y-3">
-          <div className="h-10 w-full skeleton rounded-lg"></div>
-          <div className="h-10 w-full skeleton rounded-lg"></div>
-          <div className="h-10 w-full skeleton rounded-lg"></div>
+        <div className="space-y-3 flex flex-col items-center justify-center py-6">
+          <div className="animate-pulse flex space-x-2 items-center mb-4">
+             <div className="w-2 h-2 bg-cyan-400 rounded-full"></div>
+             <div className="w-2 h-2 bg-cyan-400 rounded-full opacity-75"></div>
+             <div className="w-2 h-2 bg-cyan-400 rounded-full opacity-50"></div>
+          </div>
+          <p className="text-sm text-cyan-400 animate-pulse text-center">
+            Conectando ao servidor...<br/>
+            <span className="text-xs text-slate-500">(Pode levar até 50s no primeiro acesso devido à inicialização)</span>
+          </p>
+          <div className="w-full space-y-3 mt-4">
+            <div className="h-10 w-full skeleton rounded-lg opacity-50"></div>
+            <div className="h-10 w-full skeleton rounded-lg opacity-50"></div>
+            <div className="h-10 w-full skeleton rounded-lg opacity-50"></div>
+          </div>
         </div>
       )}
       

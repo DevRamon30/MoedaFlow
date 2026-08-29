@@ -76,6 +76,10 @@ async function getCotacoes() {
 
     return cache;
   } catch (error) {
+    if (cache) {
+      console.warn('Usando cache devido a erro na API CoinGecko:', error.message);
+      return cache;
+    }
     console.error('Erro ao buscar criptomoedas do CoinGecko:', error.message);
     throw new Error('Serviço de criptomoedas indisponível no momento.');
   }
