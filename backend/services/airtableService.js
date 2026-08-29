@@ -133,34 +133,47 @@ function tratarErroAirtable(error, mensagemContexto) {
 async function limparRegistrosAntigos(horas = 24) {
   try {
     const dataLimite = new Date(Date.now() - horas * 60 * 60 * 1000).toISOString();
+    let deletadosTotal = 0;
     
-    const response = await airtableApi.get('/', {
-      params: {
-        filterByFormula: `IS_BEFORE({DataHora}, '${dataLimite}')`,
-        maxRecords: 100 // Remove de 100 em 100 para evitar timeout
+    // Função auxiliar para deletar de uma tabela específica
+    const limparTabela = async (api, nomeTabela) => {
+      const response = await api.get('/', {
+        params: {
+          filterByFormula: `IS_BEFORE({DataHora}, '${dataLimite}')`,
+          maxRecords: 100 // Remove de 100 em 100 para evitar timeout
+        }
+      });
+
+      const records = response.data.records;
+      if (!records || records.length === 0) {
+        return 0;
       }
-    });
 
-    const records = response.data.records;
-    if (!records || records.length === 0) {
-      return 0;
-    }
+      const ids = records.map(r => r.id);
+      let deletados = 0;
 
-    const ids = records.map(r => r.id);
-    let deletados = 0;
+      // A API do Airtable exige que a exclusão em lote seja de no máximo 10 registros por requisição
+      for (let i = 0; i < ids.length; i += 10) {
+        const lote = ids.slice(i, i + 10);
+        const query = lote.map(id => `records[]=${id}`).join('&');
+        await api.delete(`/?${query}`);
+        deletados += lote.length;
+      }
+      
+      console.log(`[Airtable] Auto-Limpeza (${nomeTabela}): ${deletados} registros mais antigos que ${horas}h apagados.`);
+      return deletados;
+    };
 
-    // A API do Airtable exige que a exclusão em lote seja de no máximo 10 registros por requisição
-    for (let i = 0; i < ids.length; i += 10) {
-      const lote = ids.slice(i, i + 10);
-      const query = lote.map(id => `records[]=${id}`).join('&');
-      await airtableApi.delete(`/?${query}`);
-      deletados += lote.length;
-    }
+    // Limpa Histórico
+    deletadosTotal += await limparTabela(airtableApi, 'HistoricoCotacoes');
+    
+    // Limpa Alertas
+    deletadosTotal += await limparTabela(airtableApiAlertas, 'Alertas');
 
-    console.log(`[Airtable] Auto-Limpeza: ${deletados} registros mais antigos que ${horas}h foram apagados.`);
-    return deletados;
+    return deletadosTotal;
   } catch (error) {
     console.error('[Airtable] Falha na auto-limpeza de registros antigos:', error.response?.data || error.message);
+    return 0;
   }
 }
 
