@@ -12,7 +12,11 @@ const CACHE_TTL = 60 * 1000; // 60 segundos
 const API_URL = 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana&vs_currencies=brl,usd&include_24hr_change=true';
 
 const apiClient = axios.create({
-  timeout: 5000,
+  timeout: 15000, // Aumentado para 15s para evitar timeouts no Render
+  headers: {
+    'User-Agent': 'MoedaFlow/1.0 (Integration; +https://moedaflow.com)',
+    'Accept': 'application/json'
+  }
 });
 
 async function getCotacoesComRetry(tentativas = 3) {

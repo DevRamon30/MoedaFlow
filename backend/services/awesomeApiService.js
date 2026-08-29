@@ -8,7 +8,10 @@ const CACHE_TTL = 60 * 1000; // 60 seconds
 const API_URL = 'https://economia.awesomeapi.com.br/json/last/USD-BRL,EUR-BRL,BTC-BRL';
 
 const apiClient = axios.create({
-  timeout: 5000, // 5s timeout
+  timeout: 15000, // Aumentado para 15s para evitar timeouts no Render
+  headers: {
+    'User-Agent': 'MoedaFlow/1.0 (Integration; +https://moedaflow.com)'
+  }
 });
 
 async function getCotacoes() {
