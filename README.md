@@ -63,6 +63,14 @@ npm run dev
 ```
 Acesse a aplicação no navegador pela URL fornecida pelo Vite (ex: `http://localhost:5173`).
 
+## 🚀 Deploy / Hospedagem
+
+A aplicação está hospedada e disponível online nos seguintes serviços:
+- **Frontend:** Hospedado no Vercel
+- **Backend:** Hospedado no Render
+
+🔗 **Link da Aplicação:** [https://moedaflow-app.vercel.app/](https://moedaflow-app.vercel.app/)
+
 ## 📚 Arquitetura Resumida
 A aplicação foi estruturada separando as responsabilidades. O **Backend** age como uma ponte segura, gerenciando o banco de dados e mascarando chaves (Proxy Pattern para contornar problemas de CORS no frontend). O **Frontend** foi focado unicamente na experiência de usuário (UX) fluida, com atualizações de interface que não travam a navegação.
 
