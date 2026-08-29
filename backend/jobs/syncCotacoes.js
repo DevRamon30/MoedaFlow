@@ -80,6 +80,9 @@ function startSyncJob() {
       }
 
       console.log(`[CRON] Sincronização concluída com sucesso! ${registrosSalvos} novos registros inseridos no Airtable.`);
+      
+      // 4. Executa a limpeza automática de registros mais velhos que 24 horas
+      await airtableService.limparRegistrosAntigos(24);
     } catch (error) {
       console.error('[CRON] Ocorreu um erro fatal no job de sincronização:', error.message);
     }
@@ -88,10 +91,10 @@ function startSyncJob() {
   // Executa uma vez imediatamente ao iniciar o servidor
   runSync();
 
-  // Roda a cada 1 minuto ('*/1 * * * *')
-  cron.schedule('*/1 * * * *', runSync);
+  // Roda a cada 5 minutos ('*/5 * * * *')
+  cron.schedule('*/5 * * * *', runSync);
 
-  console.log('[CRON] Job agendado: Sincronização de cotações ocorrerá a cada 1 minuto em background.');
+  console.log('[CRON] Job agendado: Sincronização de cotações ocorrerá a cada 5 minutos em background (com auto-limpeza de 24h).');
 }
 
 module.exports = {

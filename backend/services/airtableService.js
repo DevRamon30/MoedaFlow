@@ -130,9 +130,44 @@ function tratarErroAirtable(error, mensagemContexto) {
   throw new Error('Falha de persistência no banco de dados. Verifique os logs do servidor para mais detalhes.');
 }
 
+async function limparRegistrosAntigos(horas = 24) {
+  try {
+    const dataLimite = new Date(Date.now() - horas * 60 * 60 * 1000).toISOString();
+    
+    const response = await airtableApi.get('/', {
+      params: {
+        filterByFormula: `IS_BEFORE({DataHora}, '${dataLimite}')`,
+        maxRecords: 100 // Remove de 100 em 100 para evitar timeout
+      }
+    });
+
+    const records = response.data.records;
+    if (!records || records.length === 0) {
+      return 0;
+    }
+
+    const ids = records.map(r => r.id);
+    let deletados = 0;
+
+    // A API do Airtable exige que a exclusão em lote seja de no máximo 10 registros por requisição
+    for (let i = 0; i < ids.length; i += 10) {
+      const lote = ids.slice(i, i + 10);
+      const query = lote.map(id => `records[]=${id}`).join('&');
+      await airtableApi.delete(`/?${query}`);
+      deletados += lote.length;
+    }
+
+    console.log(`[Airtable] Auto-Limpeza: ${deletados} registros mais antigos que ${horas}h foram apagados.`);
+    return deletados;
+  } catch (error) {
+    console.error('[Airtable] Falha na auto-limpeza de registros antigos:', error.response?.data || error.message);
+  }
+}
+
 module.exports = {
   salvarCotacao,
   buscarHistorico,
   salvarAlerta,
-  buscarAlertas
+  buscarAlertas,
+  limparRegistrosAntigos
 };
